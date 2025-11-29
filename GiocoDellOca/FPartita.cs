@@ -41,11 +41,11 @@ namespace GiocoDellOca
             }
         }
 
-        public void ControllaCellaSpeciale(int c, int r, int num)
+        public void ControllaCellaSpeciale(int c, int r, int num, DataGridView dgv)
         {
             if (num == 5 || num%9 == 0)
             {
-
+                dgv.Rows[r].Cells[c].Im = Color.Red;
             }
         }
     }
