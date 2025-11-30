@@ -39,14 +39,14 @@
             this.dgv_Partita.Name = "dgv_Partita";
             this.dgv_Partita.RowHeadersWidth = 82;
             this.dgv_Partita.RowTemplate.Height = 33;
-            this.dgv_Partita.Size = new System.Drawing.Size(919, 919);
+            this.dgv_Partita.Size = new System.Drawing.Size(1283, 1042);
             this.dgv_Partita.TabIndex = 0;
             // 
             // FPartita
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1401, 943);
+            this.ClientSize = new System.Drawing.Size(2138, 1209);
             this.Controls.Add(this.dgv_Partita);
             this.Name = "FPartita";
             this.Text = "FPartita";

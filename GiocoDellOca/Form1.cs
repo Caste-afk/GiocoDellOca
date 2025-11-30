@@ -19,7 +19,11 @@ namespace GiocoDellOca
 
         private void btn_Gioca_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            using (FPartita partita = new FPartita())
+            {
+                partita.ShowDialog();
+            }
         }
     }
 }
