@@ -33,19 +33,23 @@
             this.lbl_Turno = new System.Windows.Forms.Label();
             this.ptb_Dado1 = new System.Windows.Forms.PictureBox();
             this.ptb_Dado2 = new System.Windows.Forms.PictureBox();
+            this.ptb_g1 = new System.Windows.Forms.PictureBox();
+            this.ptb_g2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Partita)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptb_Dado1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptb_Dado2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptb_g1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptb_g2)).BeginInit();
             this.SuspendLayout();
             // 
             // dgv_Partita
             // 
             this.dgv_Partita.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgv_Partita.Location = new System.Drawing.Point(12, 12);
+            this.dgv_Partita.Location = new System.Drawing.Point(238, 108);
             this.dgv_Partita.Name = "dgv_Partita";
             this.dgv_Partita.RowHeadersWidth = 82;
             this.dgv_Partita.RowTemplate.Height = 33;
-            this.dgv_Partita.Size = new System.Drawing.Size(1283, 1042);
+            this.dgv_Partita.Size = new System.Drawing.Size(839, 708);
             this.dgv_Partita.TabIndex = 0;
             // 
             // btn_Dadi
@@ -83,11 +87,29 @@
             this.ptb_Dado2.TabIndex = 4;
             this.ptb_Dado2.TabStop = false;
             // 
+            // ptb_g1
+            // 
+            this.ptb_g1.Location = new System.Drawing.Point(124, 108);
+            this.ptb_g1.Name = "ptb_g1";
+            this.ptb_g1.Size = new System.Drawing.Size(80, 80);
+            this.ptb_g1.TabIndex = 5;
+            this.ptb_g1.TabStop = false;
+            // 
+            // ptb_g2
+            // 
+            this.ptb_g2.Location = new System.Drawing.Point(12, 108);
+            this.ptb_g2.Name = "ptb_g2";
+            this.ptb_g2.Size = new System.Drawing.Size(80, 80);
+            this.ptb_g2.TabIndex = 6;
+            this.ptb_g2.TabStop = false;
+            // 
             // FPartita
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2138, 1087);
+            this.Controls.Add(this.ptb_g2);
+            this.Controls.Add(this.ptb_g1);
             this.Controls.Add(this.ptb_Dado2);
             this.Controls.Add(this.ptb_Dado1);
             this.Controls.Add(this.lbl_Turno);
@@ -95,9 +117,12 @@
             this.Controls.Add(this.dgv_Partita);
             this.Name = "FPartita";
             this.Text = "FPartita";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FPartita_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Partita)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptb_Dado1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptb_Dado2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptb_g1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptb_g2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -110,5 +135,7 @@
         private System.Windows.Forms.Label lbl_Turno;
         private System.Windows.Forms.PictureBox ptb_Dado1;
         private System.Windows.Forms.PictureBox ptb_Dado2;
+        private System.Windows.Forms.PictureBox ptb_g1;
+        private System.Windows.Forms.PictureBox ptb_g2;
     }
 }

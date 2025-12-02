@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,11 @@ namespace GiocoDellOca
     internal class CGiocatore
     {
         private int posizione;
+        private Image immagine;
 
-        public CGiocatore()
+        public CGiocatore(Image immagine)
         {
+            this.immagine = immagine;
             posizione = 0;
         }
 
@@ -27,6 +30,11 @@ namespace GiocoDellOca
         public int GetPosizione()
         {
             return posizione;
+        }
+
+        public Image GetImmagine()
+        {
+            return immagine;
         }
     }
 }

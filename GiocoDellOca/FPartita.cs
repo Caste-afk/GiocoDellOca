@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -12,21 +14,55 @@ namespace GiocoDellOca
 
         public event EventHandler OnCasellaSpeciale;
 
+        private List<Image> immaginiDadi;
+        private List<Image> immaginiCaselle;
+
         bool turno; // true = giocatore 1, false = giocatore 2
         CGiocatore g1, g2;
 
-        public FPartita()
+        public FPartita(Image img1, Image img2)
         {
             InitializeComponent();
-            ImpostaTabellone();
-            g1 = new CGiocatore();
-            g2 = new CGiocatore();
+            g1 = new CGiocatore(img1);
+            g2 = new CGiocatore(img2);
             turno = true;
+            ptb_Dado1.SizeMode = PictureBoxSizeMode.StretchImage;
+            ptb_Dado2.SizeMode = PictureBoxSizeMode.StretchImage;
+            ImpostaImmaginiGiocatori();
+            #region imposta immagini
+
+            immaginiDadi = new List<Image>();
+            for(int i =1; i<=6; i++)
+            {
+                AggiungiImmagineACella(immaginiDadi, "dado" + i.ToString() + ".png");
+            }
+            immaginiCaselle = new List<Image>();
+            AggiungiImmagineACella(immaginiCaselle, "CasellaOca.png");
+            AggiungiImmagineACella(immaginiCaselle, "ponte.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "labirinto.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "prigione.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "scheletro.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "fine.png");
+            #endregion
+
+            ImpostaTabellone();
+
         }
 
-        private void FPartita_OnClose(object sender, FormClosedEventArgs e)
+        private void ImpostaImmaginiGiocatori()
         {
-            Application.Exit();
+            ptb_g1.Image = g1.GetImmagine();
+            ptb_g2.Image = g2.GetImmagine();
+            ptb_g1.SizeMode = PictureBoxSizeMode.StretchImage;
+            ptb_g2.SizeMode = PictureBoxSizeMode.StretchImage;
+            ptb_g1.BackColor = Color.Transparent;
+            ptb_g2.BackColor = Color.Transparent;
+        }
+
+
+        private void AggiungiImmagineACella(List<Image> lista, string nome)
+        {
+            lista.Add(Image.FromFile(Path.Combine(Application.StartupPath, "img", nome)));
         }
 
         private void ImpostaTabellone()
@@ -94,40 +130,45 @@ namespace GiocoDellOca
         public bool ControllaCellaSpeciale(int c, int r, int num, DataGridView dgv)
         {
 
-            if (num == 5 || num % 9 == 0)
+            if ((num == 5 || num % 9 == 0 )&& num != 63)
             {
-                MettiImmagine(c, r, "CasellaOca.png", dgv);
+                MettiImmagine(c, r, 0, dgv);
                 return true;
             }
             if(num == 6)
             {
-                MettiImmagine(c, r, "ponte.jpg", dgv);
+                MettiImmagine(c, r, 1, dgv);
                 return true;
             }
             if(num == 19)
             {
-                MettiImmagine(c, r, "labirinto.jpg", dgv);
+                MettiImmagine(c, r, 2, dgv);
                 return true;
             }
             if (num == 31)
             {
-                MettiImmagine(c, r, "prigione.jpg", dgv);
+                MettiImmagine(c, r, 3, dgv);
                 return true;
             }
             if(num == 58)
             {
-                MettiImmagine(c, r, "scheletro.jpg", dgv);
+                MettiImmagine(c, r, 4, dgv);
+                return true;
+            }
+            if(num == 63)//mettere immagine
+            {
+                MettiImmagine(c, r, 5, dgv);
                 return true;
             }
 
             return false;
         }
 
-        private void MettiImmagine(int c, int r, string nomeFile, DataGridView dgv)
+        private void MettiImmagine(int c, int r, int posizione, DataGridView dgv)
         {
             string path = Path.Combine(Application.StartupPath, "img");
             var cell = new DataGridViewImageCell();
-            cell.Value = Image.FromFile(Path.Combine(path, nomeFile));
+            cell.Value = immaginiCaselle[posizione];
             cell.ImageLayout = DataGridViewImageCellLayout.Stretch;
             dgv.Rows[r].Cells[c] = cell;
         }
@@ -135,16 +176,17 @@ namespace GiocoDellOca
         private void btn_Dadi_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
-            int dado1 = rnd.Next(1, 7);
-            int dado2 = rnd.Next(1, 7);
-            AnimazioneDadi(dado1, dado2);
+            int dado1 = rnd.Next(1, 6);
+            int dado2 = rnd.Next(1, 6);
+            AnimazioneDadi(dado1-1, dado2-1);
+            MessageBox.Show("Dado 1: " + (dado1).ToString() + "\nDado 2: " + (dado2 ).ToString());
             if (turno)
             {
-                Avanzamento(g1, dado1 + dado2);
+                Avanzamento(g1, (dado1 + dado2));
             }
             else
             {
-                Avanzamento(g2, dado1 + dado2);
+                Avanzamento(g2, (dado1 + dado2));
             }
             turno = !turno;
         }
@@ -152,20 +194,20 @@ namespace GiocoDellOca
         private void Avanzamento(CGiocatore g, int n)
         {
             (int r, int c) coord = TrovaCoordinata(g.GetPosizione());
-
             //cambia celle dalle quali si esce
-            if (!(dgv_Partita.Rows[coord.r].Cells[coord.c].Tag is null))//se non e` l'inizio
-            {
-                dgv_Partita.Rows[coord.r].Cells[coord.c].Tag = false;
-            }
+            //if (!(dgv_Partita.Rows[coord.r].Cells[coord.c].Tag is null))//se non e` l'inizio
+            //{
+            //    dgv_Partita.Rows[coord.r].Cells[coord.c].Tag = false;
+            //}
 
 
-            int avanzamentoIpotetico = g.GetPosizione() + n;
+//            int avanzamentoIpotetico = g.GetPosizione() + n;
 
+            g.Avanza(n);
             //cambia lo stato della cella occupata --> true se occupata, false se libera
-            coord = TrovaCoordinata(g.GetPosizione());
+            //coord = TrovaCoordinata(g.GetPosizione());
 
-            if (!(bool)dgv_Partita.Rows[coord.r].Cells[coord.c].Tag || dgv_Partita.Rows[coord.r].Cells[coord.c].Tag is null)//se non c'e` mai stato nessuno oppure chi c'e` stato e` andato via
+            /*if (dgv_Partita.Rows[coord.r].Cells[coord.c].Tag == null || !(bool)dgv_Partita.Rows[coord.r].Cells[coord.c].Tag)//se non c'e` mai stato nessuno oppure chi c'e` stato e` andato via
             {
                 dgv_Partita.Rows[coord.r].Cells[coord.c].Tag = true;
                 g.Avanza(n);
@@ -173,46 +215,62 @@ namespace GiocoDellOca
             else//altrimenti se qualcuno c'e` gia`
             {
                 g.Indietreggia(n);
-            }
+            }*/
+            SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, g.GetPosizione());
+
+            MessageBox.Show("Giocatore in posizione: " + g.GetPosizione().ToString());
         }
 
-        private (int, int) TrovaCoordinata(int n)
+        private (int r, int c) TrovaCoordinata(int n)
         {
-            int r = 0;
-            int c = 0;
-            while (n > 0)
-            {
-                c += 1;
-                if (c== 9)
-                {
-                    c = 0;
-                    r += 1;
-                }
-                n--;
-            }
-            return (r, c); 
+            n--; // porta 1–63 a range 0–62
+            int c = n % 9;  // modulo colonne
+            int r = n / 9;  // riga
+            return (r, c);
         }
+
 
         private void AnimazioneDadi(int r1, int r2)
         {
             int durataAnimazione = 1000;
             int frameAnimazione = 15;
-
             Random rnd = new Random();
 
             for (int i =0; i<frameAnimazione; i++)
             {
-                //imposta foto per dado1
-                int faccia1 = rnd.Next(1, 7);
-                ptb_Dado1.BackgroundImage = Image.FromFile(Path.Combine(Application.StartupPath, "img", $"dado{faccia1}.png"));
-                //imposta foto per dado2
-                int faccia2 = rnd.Next(1, 7);
-                ptb_Dado2.BackgroundImage = Image.FromFile(Path.Combine(Application.StartupPath, "img", $"dado{faccia2}.png"));
                 Thread.Sleep(durataAnimazione / frameAnimazione);
+                ptb_Dado1.Refresh();
+                ptb_Dado2.Refresh();
+
+                //imposta foto per dado1
+                int faccia1 = rnd.Next(0, 5);
+                ptb_Dado1.Image = immaginiDadi[faccia1];
+                //imposta foto per dado2
+                int faccia2 = rnd.Next(0, 5);
+                ptb_Dado2.Image = immaginiDadi[faccia2];
             }
-            ptb_Dado1.BackgroundImage = Image.FromFile(Path.Combine(Application.StartupPath, "img", $"dado{r1}.png"));
-            ptb_Dado2.BackgroundImage = Image.FromFile(Path.Combine(Application.StartupPath, "img", $"dado{r2}.png"));
+            ptb_Dado1.Image = immaginiDadi[r1];
+            ptb_Dado2.Image = immaginiDadi[r2];
         }
+
+        private void FPartita_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void SpostaPersonaggi(PictureBox giocatore, int pos)
+        {
+            (int r, int c) coord = TrovaCoordinata(pos);
+            int altezzaCella = dgv_Partita.Rows[0].Height;
+            int lunghezzaCella = dgv_Partita.Columns[0].Width;
+            Point posizione = dgv_Partita.Location;
+            posizione.X += coord.c * lunghezzaCella+10;
+            posizione.Y += coord.r * altezzaCella + 10;
+            giocatore.Location = posizione;
+        }
+
+
+
 
 
     }
