@@ -25,6 +25,8 @@ namespace GiocoDellOca
             pTemp = 0;
             g1 = new CGiocatore(img1);
             g2 = new CGiocatore(img2);
+            g1.OnPlayerOca += (s, e) => CasellaOca();
+            g2.OnPlayerOca += (s, e) => CasellaOca();
             turno = true;
             ptb_Dado1.SizeMode = PictureBoxSizeMode.StretchImage;
             ptb_Dado2.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -133,8 +135,6 @@ namespace GiocoDellOca
             if (num == 5 || (num % 9 == 0 && num != 63))
             {
                 MettiImmagine(c, r, 0, dgv);
-                g1.OnPlayerOca += (s, e) => CasellaOca();
-                g2.OnPlayerOca += (s, e) => CasellaOca();
                 return true;
             }
             if(num == 6)
@@ -168,6 +168,7 @@ namespace GiocoDellOca
 
         private void CasellaOca()
         {
+            MessageBox.Show("iuar");
             if (turno)
             {
                 Avanzamento(g1);
