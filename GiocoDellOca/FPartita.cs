@@ -25,8 +25,26 @@ namespace GiocoDellOca
             pTemp = 0;
             g1 = new CGiocatore(img1);
             g2 = new CGiocatore(img2);
-            g1.OnPlayerOca += (s, e) => CasellaOca();
-            g2.OnPlayerOca += (s, e) => CasellaOca();
+
+            AscoltaEventi(g1);
+            AscoltaEventi(g2);
+
+            immaginiDadi = new List<Image>();
+            for (int i = 1; i <= 6; i++)
+            {
+                AggiungiImmagineACella(immaginiDadi, "dado" + i.ToString() + ".png");
+            }
+            immaginiCaselle = new List<Image>();
+
+            ptb_g1.BackColor = Color.Transparent;
+            ptb_g2.BackColor = Color.Transparent;
+            ptb_Dado1.BackColor = Color.Transparent;
+            ptb_Dado2.BackColor = Color.Transparent;
+
+            ptb_Dado1.Image = immaginiDadi[0];
+            ptb_Dado2.Image = immaginiDadi[1];
+
+
             turno = true;
             ptb_Dado1.SizeMode = PictureBoxSizeMode.StretchImage;
             ptb_Dado2.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -34,21 +52,39 @@ namespace GiocoDellOca
             ImpostaImmaginiGiocatori();
             #region imposta immagini
 
-            immaginiDadi = new List<Image>();
-            for(int i =1; i<=6; i++)
-            {
-                AggiungiImmagineACella(immaginiDadi, "dado" + i.ToString() + ".png");
-            }
-            immaginiCaselle = new List<Image>();
             AggiungiImmagineACella(immaginiCaselle, "CasellaOca.png");
             AggiungiImmagineACella(immaginiCaselle, "ponte.jpg");
-            AggiungiImmagineACella(immaginiCaselle, "labirinto.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "casa.jpg");
             AggiungiImmagineACella(immaginiCaselle, "prigione.jpg");
+            AggiungiImmagineACella(immaginiCaselle, "labirinto.jpg");
             AggiungiImmagineACella(immaginiCaselle, "scheletro.jpg");
             AggiungiImmagineACella(immaginiCaselle, "fine.png");
             #endregion
 
             ImpostaTabellone();
+
+        }
+
+        private void AscoltaEventi(CGiocatore g)
+        {
+            List<EventHandler> eventi = new List<EventHandler>()
+            {
+                (s, e) => CasellaOca(),
+                (s, e) => CasellaPonte(),
+                (s, e) => CasellaCasa(),
+                (s, e) => CasellaPrigione(),
+                (s, e) => CasellaLabirinto(),
+                (s, e) => CasellaScheletro(),
+                (s, e) => CasellaFine()
+            };
+
+            g.OnPlayerOca += eventi[0];
+            g.OnPlayerPonte += eventi[1];
+            g.OnPlayerCasa += eventi[2];
+            g.OnPlayerPrigione += eventi[3];
+            g.OnPlayerLabirinto += eventi[4];
+            g.OnPlayerScheletro += eventi[5];
+            g.OnPlayerFine += eventi[6];
 
         }
 
@@ -98,6 +134,8 @@ namespace GiocoDellOca
                 dgv_Partita.Rows.Add();
                 dgv_Partita.Rows[y].Height = dim;
             }
+
+            
 
             int casella = 1;
 
@@ -152,14 +190,19 @@ namespace GiocoDellOca
                 MettiImmagine(c, r, 3, dgv);
                 return true;
             }
-            if(num == 58)
+            if(num == 42)
             {
                 MettiImmagine(c, r, 4, dgv);
                 return true;
             }
-            if(num == 63)//mettere immagine
+            if(num == 58)
             {
                 MettiImmagine(c, r, 5, dgv);
+                return true;
+            }
+            if(num == 63)//mettere immagine
+            {
+                MettiImmagine(c, r, 6, dgv);
                 return true;
             }
 
@@ -168,7 +211,7 @@ namespace GiocoDellOca
 
         private void CasellaOca()
         {
-            MessageBox.Show("iuar");
+            MessageBox.Show("casellaOca");
             if (turno)
             {
                 Avanzamento(g1);
@@ -178,6 +221,89 @@ namespace GiocoDellOca
                 Avanzamento(g2);
             }
             SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, turno ? g1.GetPosizione() : g2.GetPosizione());
+        }
+
+        private void CasellaPonte()
+        {
+            MessageBox.Show("Ponte");
+            if (turno)
+            {
+                g1.Avanza(pTemp);
+            }
+            else
+            {
+                g2.Avanza(pTemp);
+            }
+            SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, turno ? g1.GetPosizione() : g2.GetPosizione());
+        }
+
+        private void CasellaCasa()
+        {
+            CGiocatore g = turno ? g1 : g2;
+
+            // Se è già in casa → scala turni
+            if (g.getInCasa())
+            {
+                g.DecrementaCasa();
+                MessageBox.Show($"Sei in casa per altri {g.GetTurniCasa()} turni.");
+                return;
+            }
+
+            // È appena arrivato in casa → inizia i 3 turni
+            g.setInCasa(true);
+            MessageBox.Show("Sei finito nella Casa! Dovrai restare fermo per 3 turni.");
+        }
+
+        private void CasellaPrigione()
+        {
+            CGiocatore gCorrente = turno ? g1 : g2;
+            CGiocatore gAltro = turno ? g2 : g1;
+
+            // Se il giocatore corrente era in prigione → esce
+            if (gCorrente.getInPrigione())
+            {
+                gCorrente.setInPrigione(false);
+                MessageBox.Show("Esci dalla prigione! Puoi riprendere a muoverti.");
+                return;
+            }
+
+            // Se l'altro giocatore è in prigione → liberalo 
+            // e il corrente prende il suo posto
+            if (gAltro.getInPrigione())
+            {
+                gAltro.setInPrigione(false);
+                gCorrente.setInPrigione(true);
+
+                MessageBox.Show("Hai liberato l'altro giocatore, ma ora sei tu in prigione!");
+                return;
+            }
+
+            // Nessuno era in prigione → il corrente ci entra ora
+            gCorrente.setInPrigione(true);
+            MessageBox.Show("Sei finito in prigione! Rimarrai fermo finché l'altro non ti libera.");
+        }
+
+        private void CasellaLabirinto()
+        {
+            MessageBox.Show("Labirinto: Torni alla casella 30");
+            CGiocatore g = turno ? g1 : g2;
+            g.Indietreggia(g.GetPosizione() - 30);
+            SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, g.GetPosizione());
+        }
+
+        private void CasellaScheletro()
+        {
+            MessageBox.Show("Scheletro: Torni alla casella 1");
+            CGiocatore g = turno ? g1 : g2;
+            g.Indietreggia(g.GetPosizione() - 1);
+            SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, g.GetPosizione());
+        }
+
+        private void CasellaFine()
+        {
+            int vincitore = turno ? 1 : 2;
+            MessageBox.Show($"Ha vinto il giocatore n°: {vincitore}");
+            Application.Exit();
         }
 
         private void MettiImmagine(int c, int r, int posizione, DataGridView dgv)
@@ -191,21 +317,44 @@ namespace GiocoDellOca
 
         private void btn_Dadi_Click(object sender, EventArgs e)
         {
+
+            CGiocatore gCorrente = turno ? g1 : g2;
+
+            if (gCorrente.getInCasa())
+            {
+                gCorrente.DecrementaCasa();
+                if (gCorrente.GetTurniCasa() > 0)
+                {
+                    MessageBox.Show($"Sei in casa! Turno saltato. Rimangono {gCorrente.GetTurniCasa()} turni.");
+                }
+                else
+                {
+                    MessageBox.Show("Esci dalla casa! Puoi riprendere a giocare dal prossimo turno.");
+                }
+                turno = !turno;
+                lbl_Turno.Text = turno ? "Turno del Giocatore 1" : "Turno del Giocatore 2";
+                return;
+            }
+
+            if (gCorrente.getInPrigione())
+            {
+                MessageBox.Show("Sei in prigione! Non puoi muoverti finché l'altro giocatore non ti libera.");
+                turno = !turno;
+                lbl_Turno.Text = turno ? "Turno del Giocatore 1" : "Turno del Giocatore 2";
+                return;
+            }
+
             Random rnd = new Random();
             int dado1 = rnd.Next(1, 7);
             int dado2 = rnd.Next(1, 7);
             pTemp = dado1 + dado2;
-            AnimazioneDadi(dado1-1, dado2-1);
-            if (turno)
-            {
-                Avanzamento(g1);
-            }
-            else
-            {
-                Avanzamento(g2);
-            }
-            MessageBox.Show("Dado 1: " + (dado1).ToString() + "\nDado 2: " + (dado2).ToString());
+
+            AnimazioneDadi(dado1 - 1, dado2 - 1);
+
+            Avanzamento(gCorrente);
+
             turno = !turno;
+            lbl_Turno.Text = turno ? "Turno del Giocatore 1" : "Turno del Giocatore 2";
         }
 
         private void Avanzamento(CGiocatore g)
@@ -213,15 +362,14 @@ namespace GiocoDellOca
             g.Avanza(pTemp);
             int posizione = g.GetPosizione();
             (int c, int r)coord = TrovaCoordinata(g.GetPosizione());
-
-            if(posizione == 5 || (posizione%9==0 && posizione != 63))
-            {
-                g.OnPlayerOca?.Invoke(this, EventArgs.Empty);
-            }
+            
+            g.ControllaPosizione();
 
             SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, g.GetPosizione());
 
-            MessageBox.Show("Giocatore in posizione: " + g.GetPosizione().ToString());
+            CGiocatore gAltro = turno ? g2 : g1;
+            ControllaScontro(g, gAltro);
+            lbl_Turno.Text = turno ? "Turno del Giocatore 1" : "Turno del Giocatore 2";
         }
 
         private (int r, int c) TrovaCoordinata(int n)
@@ -256,6 +404,17 @@ namespace GiocoDellOca
             ptb_Dado2.Image = immaginiDadi[r2];
         }
 
+        private void ControllaScontro(CGiocatore gCorrente, CGiocatore gAltro)
+        {
+            if (gCorrente.GetPosizione() == gAltro.GetPosizione())
+            {
+                gAltro.Indietreggia(pTemp); // lo rimetti alla posizione 0
+                MessageBox.Show("Hai preso l'altro giocatore! Torna alla partenza.");
+                SpostaPersonaggi(turno ? ptb_g2 : ptb_g1, gAltro.GetPosizione());
+            }
+        }
+
+
         private void FPartita_FormClosing(object sender, FormClosingEventArgs e)
         {
             Application.Exit();
@@ -271,10 +430,6 @@ namespace GiocoDellOca
             posizione.Y += coord.r * altezzaCella + 10;
             giocatore.Location = posizione;
         }
-
-
-
-
 
     }
 }

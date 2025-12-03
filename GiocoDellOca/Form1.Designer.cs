@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lbl_Titolo = new System.Windows.Forms.Label();
             this.btn_Gioca = new System.Windows.Forms.Button();
             this.ptb_g1 = new System.Windows.Forms.PictureBox();
@@ -71,42 +72,62 @@
             // 
             // btn_sinistra1
             // 
+            this.btn_sinistra1.BackColor = System.Drawing.Color.Transparent;
+            this.btn_sinistra1.BackgroundImage = global::GiocoDellOca.Properties.Resources.frecciaSinistra;
+            this.btn_sinistra1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btn_sinistra1.FlatAppearance.BorderSize = 0;
+            this.btn_sinistra1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_sinistra1.ForeColor = System.Drawing.Color.Transparent;
             this.btn_sinistra1.Location = new System.Drawing.Point(75, 255);
             this.btn_sinistra1.Name = "btn_sinistra1";
             this.btn_sinistra1.Size = new System.Drawing.Size(75, 111);
             this.btn_sinistra1.TabIndex = 3;
-            this.btn_sinistra1.Text = "button1";
-            this.btn_sinistra1.UseVisualStyleBackColor = true;
+            this.btn_sinistra1.UseVisualStyleBackColor = false;
             this.btn_sinistra1.Click += new System.EventHandler(this.btn_sinistra1_Click);
             // 
             // btn_destra1
             // 
+            this.btn_destra1.BackColor = System.Drawing.Color.Transparent;
+            this.btn_destra1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_destra1.BackgroundImage")));
+            this.btn_destra1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btn_destra1.FlatAppearance.BorderSize = 0;
+            this.btn_destra1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_destra1.ForeColor = System.Drawing.Color.Transparent;
             this.btn_destra1.Location = new System.Drawing.Point(404, 255);
             this.btn_destra1.Name = "btn_destra1";
             this.btn_destra1.Size = new System.Drawing.Size(75, 111);
             this.btn_destra1.TabIndex = 4;
-            this.btn_destra1.Text = "button2";
-            this.btn_destra1.UseVisualStyleBackColor = true;
+            this.btn_destra1.UseVisualStyleBackColor = false;
             this.btn_destra1.Click += new System.EventHandler(this.btn_destra1_Click);
             // 
             // btn_destra2
             // 
+            this.btn_destra2.BackColor = System.Drawing.Color.Transparent;
+            this.btn_destra2.BackgroundImage = global::GiocoDellOca.Properties.Resources.frecciaDestra;
+            this.btn_destra2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btn_destra2.FlatAppearance.BorderSize = 0;
+            this.btn_destra2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_destra2.ForeColor = System.Drawing.Color.Transparent;
             this.btn_destra2.Location = new System.Drawing.Point(987, 255);
             this.btn_destra2.Name = "btn_destra2";
             this.btn_destra2.Size = new System.Drawing.Size(75, 111);
             this.btn_destra2.TabIndex = 7;
-            this.btn_destra2.Text = "button3";
-            this.btn_destra2.UseVisualStyleBackColor = true;
+            this.btn_destra2.UseVisualStyleBackColor = false;
             this.btn_destra2.Click += new System.EventHandler(this.btn_destra2_Click);
             // 
             // btn_sinistra2
             // 
+            this.btn_sinistra2.BackColor = System.Drawing.Color.Transparent;
+            this.btn_sinistra2.BackgroundImage = global::GiocoDellOca.Properties.Resources.frecciaSinistra;
+            this.btn_sinistra2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btn_sinistra2.FlatAppearance.BorderSize = 0;
+            this.btn_sinistra2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_sinistra2.ForeColor = System.Drawing.Color.Transparent;
             this.btn_sinistra2.Location = new System.Drawing.Point(658, 255);
             this.btn_sinistra2.Name = "btn_sinistra2";
             this.btn_sinistra2.Size = new System.Drawing.Size(75, 111);
             this.btn_sinistra2.TabIndex = 6;
-            this.btn_sinistra2.Text = "button4";
-            this.btn_sinistra2.UseVisualStyleBackColor = true;
+            this.btn_sinistra2.UseVisualStyleBackColor = false;
             this.btn_sinistra2.Click += new System.EventHandler(this.btn_sinistra2_Click);
             // 
             // ptb_g2
