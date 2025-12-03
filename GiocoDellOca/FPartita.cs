@@ -12,22 +12,23 @@ namespace GiocoDellOca
     public partial class FPartita : Form
     {
 
-        public event EventHandler OnCasellaSpeciale;
-
         private List<Image> immaginiDadi;
         private List<Image> immaginiCaselle;
 
         bool turno; // true = giocatore 1, false = giocatore 2
         CGiocatore g1, g2;
+        int pTemp;
 
         public FPartita(Image img1, Image img2)
         {
             InitializeComponent();
+            pTemp = 0;
             g1 = new CGiocatore(img1);
             g2 = new CGiocatore(img2);
             turno = true;
             ptb_Dado1.SizeMode = PictureBoxSizeMode.StretchImage;
             ptb_Dado2.SizeMode = PictureBoxSizeMode.StretchImage;
+            this.Size = new Size(2164, 1158);
             ImpostaImmaginiGiocatori();
             #region imposta immagini
 
@@ -58,7 +59,6 @@ namespace GiocoDellOca
             ptb_g1.BackColor = Color.Transparent;
             ptb_g2.BackColor = Color.Transparent;
         }
-
 
         private void AggiungiImmagineACella(List<Image> lista, string nome)
         {
@@ -130,9 +130,11 @@ namespace GiocoDellOca
         public bool ControllaCellaSpeciale(int c, int r, int num, DataGridView dgv)
         {
 
-            if ((num == 5 || num % 9 == 0 )&& num != 63)
+            if (num == 5 || (num % 9 == 0 && num != 63))
             {
                 MettiImmagine(c, r, 0, dgv);
+                g1.OnPlayerOca += (s, e) => CasellaOca();
+                g2.OnPlayerOca += (s, e) => CasellaOca();
                 return true;
             }
             if(num == 6)
@@ -164,6 +166,19 @@ namespace GiocoDellOca
             return false;
         }
 
+        private void CasellaOca()
+        {
+            if (turno)
+            {
+                Avanzamento(g1);
+            }
+            else
+            {
+                Avanzamento(g2);
+            }
+            SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, turno ? g1.GetPosizione() : g2.GetPosizione());
+        }
+
         private void MettiImmagine(int c, int r, int posizione, DataGridView dgv)
         {
             string path = Path.Combine(Application.StartupPath, "img");
@@ -176,46 +191,33 @@ namespace GiocoDellOca
         private void btn_Dadi_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
-            int dado1 = rnd.Next(1, 6);
-            int dado2 = rnd.Next(1, 6);
+            int dado1 = rnd.Next(1, 7);
+            int dado2 = rnd.Next(1, 7);
+            pTemp = dado1 + dado2;
             AnimazioneDadi(dado1-1, dado2-1);
-            MessageBox.Show("Dado 1: " + (dado1).ToString() + "\nDado 2: " + (dado2 ).ToString());
             if (turno)
             {
-                Avanzamento(g1, (dado1 + dado2));
+                Avanzamento(g1);
             }
             else
             {
-                Avanzamento(g2, (dado1 + dado2));
+                Avanzamento(g2);
             }
+            MessageBox.Show("Dado 1: " + (dado1).ToString() + "\nDado 2: " + (dado2).ToString());
             turno = !turno;
         }
 
-        private void Avanzamento(CGiocatore g, int n)
+        private void Avanzamento(CGiocatore g)
         {
-            (int r, int c) coord = TrovaCoordinata(g.GetPosizione());
-            //cambia celle dalle quali si esce
-            //if (!(dgv_Partita.Rows[coord.r].Cells[coord.c].Tag is null))//se non e` l'inizio
-            //{
-            //    dgv_Partita.Rows[coord.r].Cells[coord.c].Tag = false;
-            //}
+            g.Avanza(pTemp);
+            int posizione = g.GetPosizione();
+            (int c, int r)coord = TrovaCoordinata(g.GetPosizione());
 
-
-//            int avanzamentoIpotetico = g.GetPosizione() + n;
-
-            g.Avanza(n);
-            //cambia lo stato della cella occupata --> true se occupata, false se libera
-            //coord = TrovaCoordinata(g.GetPosizione());
-
-            /*if (dgv_Partita.Rows[coord.r].Cells[coord.c].Tag == null || !(bool)dgv_Partita.Rows[coord.r].Cells[coord.c].Tag)//se non c'e` mai stato nessuno oppure chi c'e` stato e` andato via
+            if(posizione == 5 || (posizione%9==0 && posizione != 63))
             {
-                dgv_Partita.Rows[coord.r].Cells[coord.c].Tag = true;
-                g.Avanza(n);
+                g.OnPlayerOca?.Invoke(this, EventArgs.Empty);
             }
-            else//altrimenti se qualcuno c'e` gia`
-            {
-                g.Indietreggia(n);
-            }*/
+
             SpostaPersonaggi(turno ? ptb_g1 : ptb_g2, g.GetPosizione());
 
             MessageBox.Show("Giocatore in posizione: " + g.GetPosizione().ToString());

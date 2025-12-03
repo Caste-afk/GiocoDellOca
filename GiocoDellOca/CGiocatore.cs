@@ -9,9 +9,10 @@ namespace GiocoDellOca
 {
     internal class CGiocatore
     {
+        public EventHandler OnPlayerOca;
+
         private int posizione;
         private Image immagine;
-
         public CGiocatore(Image immagine)
         {
             this.immagine = immagine;
@@ -25,6 +26,11 @@ namespace GiocoDellOca
         public void Indietreggia(int ris)
         {
             posizione -= ris;
+        }
+
+        public void ControllaPosizione()
+        {
+            OnPlayerOca?.Invoke(this, EventArgs.Empty);
         }
 
         public int GetPosizione()
